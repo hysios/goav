@@ -26,6 +26,14 @@ type (
 	File          C.FILE
 )
 
+const (
+	RoudingZero  = 0
+	RoundInfo    = 1
+	RoundDown    = 2
+	RoundUp      = 3
+	RoundNearInf = 5
+)
+
 //Return the LIBAvUTIL_VERSION_INT constant.
 func AvutilVersion() uint {
 	return uint(C.avutil_version())
@@ -74,4 +82,12 @@ func AvGetTimeBaseQ() Rational {
 
 func AvRescale(a, b, c int64) int64 {
 	return (int64)(C.av_rescale((C.int64_t)(a), (C.int64_t)(b), (C.int64_t)(c)))
+}
+
+func AvRescaleQ(a int64, bq, cq Rational) int64 {
+	return (int64)(C.av_rescale_q((C.int64_t)(a), (C.struct_AVRational)(bq), (C.struct_AVRational)(cq)))
+}
+
+func AvRescaleRnd(a, b, c int64, rouding int) int64 {
+	return (int64)(C.av_rescale_rnd((C.int64_t)(a), (C.int64_t)(b), (C.int64_t)(c), (C.enum_AVRounding)(rouding)))
 }

@@ -11,22 +11,23 @@ import "C"
 
 import (
 	"errors"
+	"unsafe"
 
 	"github.com/giorgisio/goav/avutil"
 )
 
 // int avio_open_dyn_buf(AVIOContext **s)
-func AvioOpenDynBuf(ctxt *AvIOContext) error {
-	return avutil.ErrorFromCode(int(C.avio_open_dyn_buf((*C.struct_AVIOContext)(ctxt))))
+func AvioOpenDynBuf(ctxt **AvIOContext) error {
+	return avutil.ErrorFromCode(int(C.avio_open_dyn_buf((**C.struct_AVIOContext)(unsafe.Pointer(ctxt)))))
 }
 
 func AvioGetBuffer(ctxt *AvIOContext) ([]byte, error) {
 	var pbuf uintptr
-	size := C.avio_get_dyn_buf((*C.struct_AVIOContext)(ctxt), &pbuf)
+	size := C.avio_get_dyn_buf((*C.struct_AVIOContext)(ctxt), (**C.uint8_t)(unsafe.Pointer(&pbuf)))
 	if size <= 0 {
 		return nil, errors.New("invalid buffer")
 	}
-	defer C.avio_close_dyn_buf((*C.struct_AVIOContext)(ctxt), &pbuf)
-	buf := C.GoBytes(pbuf, size)
+	defer C.avio_close_dyn_buf((*C.struct_AVIOContext)(ctxt), (**C.uint8_t)(unsafe.Pointer(&pbuf)))
+	buf := C.GoBytes(unsafe.Pointer(pbuf), size)
 	return buf, nil
 }

@@ -31,3 +31,15 @@ func AvioGetBuffer(ctxt *AvIOContext) ([]byte, error) {
 	buf := C.GoBytes(unsafe.Pointer(pbuf), size)
 	return buf, nil
 }
+
+func (ctxt *AvIOContext) GetBuffer() ([]byte, error) {
+	return AvioGetBuffer(ctxt)
+}
+
+func (ctxt *AvIOContext) Pause(on bool) error {
+	var yes int
+	if on {
+		yes = 1
+	}
+	return avutil.ErrorFromCode(int(C.avio_pause((*C.struct_AVIOContext)(ctxt), (C.int)(yes))))
+}

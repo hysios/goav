@@ -7,8 +7,9 @@
 package avfilter
 
 /*
-	#cgo pkg-config: libavfilter
-	#include <libavfilter/avfilter.h>
+#cgo pkg-config: libavfilter
+#cgo CFLAGS: -Wno-deprecated-declarations -Wno-c99-extensions
+#include <libavfilter/avfilter.h>
 */
 import "C"
 import (
